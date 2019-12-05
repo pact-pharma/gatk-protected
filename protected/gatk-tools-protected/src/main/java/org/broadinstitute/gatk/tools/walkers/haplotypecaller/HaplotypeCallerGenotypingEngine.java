@@ -330,10 +330,10 @@ public class HaplotypeCallerGenotypingEngine extends GenotypingEngine<AssemblyBa
         } else {
             final Iterator<Allele> it = allelesToDrop.iterator();
             final StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < MAX_DROPPED_ALTERNATIVE_ALLELES_TO_LOG; i++) {
+            for (int i = 0; i < MAX_DROPPED_ALTERNATIVE_ALLELES_TO_LOG - 1; i++) {
                 builder.append(it.next().toString()).append(", ");
             }
-            allelesToDropString = builder.append(it.next().toString()).append(" and ").append(allelesToDrop.size() - 20).append(" more").toString();
+            allelesToDropString = builder.append(it.next().toString()).append(" and ").append(allelesToDrop.size() - MAX_DROPPED_ALTERNATIVE_ALLELES_TO_LOG).append(" more").toString();
         }
         logger.warn(String.format("location %s: too many alternative alleles found (%d) larger than the maximum requested with -%s (%d), the following will be dropped: %s.", location,
                 readAlleleLikelihoods.alleleCount() - 1, GenotypeCalculationArgumentCollection.MAX_ALTERNATE_ALLELES_SHORT_NAME, configuration.genotypeArgs.MAX_ALTERNATE_ALLELES,
@@ -417,7 +417,7 @@ public class HaplotypeCallerGenotypingEngine extends GenotypingEngine<AssemblyBa
             lessFrequentFirst.add(genotypeLikelihoods.alleleAt(i));
         }
 
-        final Set<Allele> result = new HashSet<>(excessAlternativeAlleleCount);
+        final Set<Allele> result = new LinkedHashSet<>(excessAlternativeAlleleCount);
         for (int i = 0; i < excessAlternativeAlleleCount; i++) {
             result.add(lessFrequentFirst.remove());
         }
